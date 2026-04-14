@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Workout Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>My Calisthenics Journey</h1>
+    
+    <a href="/add">+ Add New Workout</a>
+    
+    <hr>  
+    
+    <h2>Workout History</h2>
+    
+    {% if workouts %}
+        {% for workout in workouts %}
+            <div class="workout-card">
+                <strong>{{ workout.date | format_date }}</strong> -
+                {{ workout.exercise }}: 
+                {{ workout.sets }} sets of 
+                {{ workout.reps }} reps 
+                with {{ workout.weight }}
+            </div>
+            <br>
+        {% endfor %}
+    {% else %}
+        <p>No workouts yet. Click "Add New Workout" to get started! 💪</p>
+    {% endif %}
+    
+</body>
+</html>
