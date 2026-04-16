@@ -21,6 +21,13 @@
                 {{ workout.sets }} sets of 
                 {{ workout.reps }} reps 
                 with {{ workout.weight }}
+
+                <form method="POST" action="/delete/{{ workout.id }}" id="delete_form"
+                 
+                onsubmit="return confirm('Delete this workout?');">
+                <button type="submit" id="delete_button">Delete</button>
+                
+                </form>
             </div>
             <br>
         {% endfor %}

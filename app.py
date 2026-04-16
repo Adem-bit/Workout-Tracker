@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect
-from workout import add_workout, get_all_workouts
+from workout import add_workout, get_all_workouts, delete_workout
 from db import init_db
 from datetime import datetime
 
@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 def format_date(value):
-    
+
     date_obj = datetime.strptime(value, "%Y-%m-%d")
     return date_obj.strftime("%A, %B %d %Y")
 
@@ -73,6 +73,12 @@ def add():
         return redirect("/")
 
     return render_template("add.html")
+
+
+@app.route("/delete/<int:id>", methods=["POST"])
+def delete(id):
+    delete_workout(id)
+    return redirect("/")
 
 
 if __name__ == "__main__":

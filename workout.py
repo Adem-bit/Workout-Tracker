@@ -40,3 +40,13 @@ def get_all_workouts():
         workouts_list.append(workout_dict)
 
     return workouts_list
+
+
+def delete_workout(workout_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM workouts WHERE id = ?", (workout_id,))
+
+    conn.commit()
+    conn.cursor()

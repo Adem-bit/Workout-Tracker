@@ -1,0 +1,13 @@
+#delete_form {
+    margin-left: 10px;
+    display: inline;
+}
+
+#delete_button {
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline;
+}
