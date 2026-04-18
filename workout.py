@@ -50,3 +50,24 @@ def delete_workout(workout_id):
 
     conn.commit()
     conn.cursor()
+
+
+def get_personal_records():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT exercise, reps FROM workouts")
+    rows = cursor.fetchall()
+    conn.close()
+
+    prs = {}
+    for exercise, reps_string in rows:
+        try:
+            nums = list(map(int, reps_string.split(",")))
+            best = max(nums)
+        except (ValueError, TypeError):
+            continue
+
+        if best > prs.get(exercise, 0):
+            prs[exercise] = best
+
+    return prs

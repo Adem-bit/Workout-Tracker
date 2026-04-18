@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect
-from workout import add_workout, get_all_workouts, delete_workout
+from workout import add_workout, get_all_workouts, delete_workout, get_personal_records
 from db import init_db
 from datetime import datetime
 
@@ -79,6 +79,12 @@ def add():
 def delete(id):
     delete_workout(id)
     return redirect("/")
+
+
+@app.route("/prs")
+def personal_records():
+    prs = get_personal_records()
+    return render_template("prs.html", prs=prs)
 
 
 if __name__ == "__main__":
