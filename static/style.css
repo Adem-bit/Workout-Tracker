@@ -11,3 +11,32 @@
     cursor: pointer;
     display: inline;
 }
+
+.navbar {
+    background: #0d1a0d;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #4caf50;
+    margin-bottom: 2rem;
+    color: #4CAF50;
+}
+
+.nav-brand {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 1.5rem;
+    padding: 0.5rem 0;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: #4CAF50;
+}

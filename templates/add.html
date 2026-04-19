@@ -1,32 +1,32 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Workout</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1>Add Workout</h1>
-    {% if errors %}
-        <div style="color: red; background: #ffe6e6; padding: 10px; border-radius: 5px;">
-            <strong>Please fix these errors:</strong>
-            <ul>
-                {% for error in errors %}
+{% extends "navbar.html" %}
+
+{% block title %}Add Workout | Workout Tracker{% endblock %}
+
+{% block content %}
+
+<h1>Add Workout</h1>
+
+{% if errors %}
+    <div style="color: red; background: #ffe6e6; padding: 10px; border-radius: 5px;">
+        <strong>Please fix these errors:</strong>
+        <ul>
+            {% for error in errors %}
                 <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
 
-    <form method="POST">
-        <input name="exercise" placeholder="Exercise"><br><br>
-        <input name="sets" type="number" placeholder="Sets"><br><br>
-        <input name="reps" placeholder="Reps (e.g. 10,8,6)"><br><br>
-        <input name="weight" placeholder="Weight or bw"><br><br>
+<form method="POST">
+    <input name="exercise" placeholder="Exercise"><br><br>
+    <input name="sets" type="number" placeholder="Sets"><br><br>
+    <input name="reps" placeholder="Reps (e.g. 10,8,6)"><br><br>
+    <input name="weight" placeholder="Weight or 'bw'"><br><br>
 
-        <button type="submit">Save</button>
-    </form>
+    <button type="submit">Save</button>
+</form>
 
-    <br>
-    <a href="/">Back</a>
-</body>
-</html>
+<br>
+<a href="/"> <- Back</a>
+
+{% endblock %}

@@ -1,22 +1,22 @@
-<!DOCTYPE html>
-<head>
-    <title>Personal Records</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
-</head>
-<body>
-    <h1>Personal Records</h1>
+{% extends "navbar.html" %}
 
-    {% if prs %}
+{% block title %}Personal Records | Workout Tracker{% endblock %}
+
+{% block content %}
+
+<h1>🏆 Personal Records</h1>
+
+{% if prs %}
     <ul>
-        {% for exercise, best_rep in prs.items() %}
+    {% for exercise, best_rep in prs.items() %}
         <li><strong>{{ exercise }}</strong>: {{ best_rep }} reps</li>
-        {% endfor %}
+    {% endfor %}
     </ul>
-    {% else %}
+{% else %}
     <p>No records yet. Go add some workouts!</p>
-    {% endif %}
+{% endif %}
 
-    <br>
-    <a href="/">Back to workouts</a>
-</body>
-</html>
+<br>
+<a href="/"><- Back to Workouts</a>
+
+{% endblock %}
