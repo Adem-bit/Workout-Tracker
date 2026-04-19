@@ -71,3 +71,40 @@ def get_personal_records():
             prs[exercise] = best
 
     return prs
+
+
+def update_workout(workout_id, exercise, sets, reps, weight):
+    today = date.today().isoformat()
+    reps_string = ",".join(map(str, reps))
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    UPDATE workouts
+    SET date = ?, exercise = ?, sets = ?, reps = ?, weight = ?
+    WHERE id = ?
+    """, (today, exercise, sets, reps_string, str(weight), workout_id))
+
+    conn.commit()
+    conn.close()
+
+
+def get_workout(workout_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM workouts WHERE id = ?", (workout_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if row:
+        return {
+            "id": row[0],
+            "date": row[1],
+            "exercise": row[2],
+            "sets": row[3],
+            "reps": row[4],
+            "weight": row[5]
+        }
+    return None
