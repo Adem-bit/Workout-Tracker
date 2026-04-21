@@ -86,3 +86,17 @@ body {
 .empty-state-btn:hover {
     background: #388E3C;
 }
+
+.export-btn {
+    background: #2196F3;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.export-btn:hover {
+    background: #1976D2;
+}

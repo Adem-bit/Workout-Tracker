@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, Response
 from workout import add_workout, get_all_workouts, delete_workout, get_personal_records, get_workout, update_workout
 from db import init_db
 from datetime import datetime
@@ -141,6 +141,22 @@ def edit(id):
         return redirect("/")
 
     return render_template("edit.html", workout=workout)
+
+
+@app.route("/export")
+def export_csv():
+    workouts = get_all_workouts()
+
+    csv_data = "Date,Exercise,Sets,Reps,Weight,Notes\n"
+
+    for w in workouts:
+        csv_data += f"{w['date']},{w['exercise']},{w['sets']},{w['reps']},{w['weight']},{w['notes']}\n"
+
+    return Response(
+        csv_data,
+        mimetype="text/csv",
+        header={"Content-Disposition": "attachment;filename=workouts.csv"}
+    )
 
 
 if __name__ == "__main__":

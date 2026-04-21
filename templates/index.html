@@ -33,6 +33,10 @@
         <form method="POST" action="/delete/{{ workout.id }}" style="display: inline; margin-left: 5px;" onsubmit="return confirm('Delete this workout?');">
             <button type="submit" class="delete-btn">🗑️ Delete</button>
         </form>
+
+        <a href="/export">
+            <button type="button" class="export-btn">📥 Export CSV</button>
+        </a>
     </div>
         {% endfor %}
     {% else %}
