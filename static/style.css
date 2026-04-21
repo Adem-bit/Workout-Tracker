@@ -46,3 +46,43 @@ body {
 .nav-links a:hover {
     color: #4CAF50;
 }
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #f9f9f9;
+    border-radius: 12px;
+    margin-top: 2rem;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h2 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state-quote {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.empty-state-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.empty-state-btn:hover {
+    background: #388E3C;
+}

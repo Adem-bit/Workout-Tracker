@@ -36,7 +36,14 @@
     </div>
         {% endfor %}
     {% else %}
-        <p>No workouts yet. Click "Add New Workout" to get started!</p>
+        <div class="empty-state">
+            <div class="empty-state-icon">🏋️‍♂️</div>
+            <h2>Your journey starts here</h2>
+            <p class="empty-state-quote">"The only bad workout is the one that didn't happen."</p>
+            <a href="/add">
+                <button class="empty-state-btn">+ Log Your First Workout</button>
+            </a>
+        </div>
         {% endif %}
 
         {% endblock %}

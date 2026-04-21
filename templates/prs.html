@@ -13,7 +13,14 @@
     {% endfor %}
     </ul>
 {% else %}
-    <p>No records yet. Go add some workouts!</p>
+    <div class="empty-state">
+        <div class="empty-state-icon">🏋️‍♂️</div>
+        <h2>No records yet</h2>
+        <p class="empty-state-quote">Add a workout to see your personal bests!</p>
+        <a href="/add">
+            <button class="empty-state-btn">+ Add Workout</button>
+        </a>
+    </div>
 {% endif %}
 
 <br>
