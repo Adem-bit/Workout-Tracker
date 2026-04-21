@@ -20,7 +20,8 @@ def init_db():
         exercise TEXT,
         sets INTEGER,
         reps TEXT,
-        weight TEXT
+        weight TEXT,
+        notes TEXT
     )
     """)
 

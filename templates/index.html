@@ -21,6 +21,10 @@
         {{ workout.sets }} sets of 
         {{ workout.reps }} reps 
         with {{ workout.weight }}
+
+        {% if workout.notes %}
+            <br><small style="color: #666; font-style: italic;"> {{ workout.notes }}</small>
+        {% endif %}
         
         <a href="/edit/{{ workout.id }}">
             <button type="button" class="edit-btn">✏️ Edit</button>

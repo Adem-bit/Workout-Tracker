@@ -29,6 +29,7 @@ def add():
         sets_str = request.form.get("sets", "").strip()
         reps_str = request.form.get("reps", "").strip()
         weight_str = request.form.get("weight", "").strip()
+        notes = request.form.get("notes", "").strip()
 
         errors = []
         if not exercise:
@@ -67,7 +68,7 @@ def add():
             except ValueError:
                 weight = weight_str
 
-        add_workout(exercise, sets, reps, weight)
+        add_workout(exercise, sets, reps, weight, notes)
 
         return redirect("/")
 
@@ -97,6 +98,7 @@ def edit(id):
         sets_str = request.form.get("sets", "").strip()
         reps_str = request.form.get("reps", "").strip()
         weight_str = request.form.get("weight", "").strip()
+        notes = request.form.get("notes", "").strip()
 
         errors = []
         if not exercise:
@@ -135,7 +137,7 @@ def edit(id):
             except ValueError:
                 weight = weight_str
 
-        update_workout(id, exercise, sets, reps, weight)
+        update_workout(id, exercise, sets, reps, weight, notes)
         return redirect("/")
 
     return render_template("edit.html", workout=workout)

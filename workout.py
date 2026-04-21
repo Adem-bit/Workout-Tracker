@@ -2,7 +2,7 @@ from datetime import date
 from db import get_connection
 
 
-def add_workout(exercise, sets, reps, weight):
+def add_workout(exercise, sets, reps, weight, notes=""):
     today = date.today().isoformat()
     reps_string = ",".join(map(str, reps))
 
@@ -10,9 +10,9 @@ def add_workout(exercise, sets, reps, weight):
     cursor = conn.cursor()
 
     cursor.execute("""
-    INSERT INTO workouts (date, exercise, sets, reps, weight)
-    VALUES (?, ?, ?, ?, ?)
-    """, (today, exercise, sets, reps_string, str(weight)))
+    INSERT INTO workouts (date, exercise, sets, reps, weight, notes)
+    VALUES (?, ?, ?, ?, ?, ?)
+    """, (today, exercise, sets, reps_string, str(weight), notes))
 
     conn.commit()
     conn.close()
@@ -35,7 +35,8 @@ def get_all_workouts():
             "exercise": row[2],
             "sets": row[3],
             "reps": row[4],
-            "weight": row[5]
+            "weight": row[5],
+            "notes": row[6] if len(row) > 6 else ""
         }
         workouts_list.append(workout_dict)
 
@@ -73,7 +74,7 @@ def get_personal_records():
     return prs
 
 
-def update_workout(workout_id, exercise, sets, reps, weight):
+def update_workout(workout_id, exercise, sets, reps, weight, notes=""):
     today = date.today().isoformat()
     reps_string = ",".join(map(str, reps))
 
@@ -82,9 +83,9 @@ def update_workout(workout_id, exercise, sets, reps, weight):
 
     cursor.execute("""
     UPDATE workouts
-    SET date = ?, exercise = ?, sets = ?, reps = ?, weight = ?
+    SET date = ?, exercise = ?, sets = ?, reps = ?, weight = ?, notes = ?
     WHERE id = ?
-    """, (today, exercise, sets, reps_string, str(weight), workout_id))
+    """, (today, exercise, sets, reps_string, str(weight), notes, workout_id))
 
     conn.commit()
     conn.close()
@@ -105,6 +106,7 @@ def get_workout(workout_id):
             "exercise": row[2],
             "sets": row[3],
             "reps": row[4],
-            "weight": row[5]
+            "weight": row[5],
+            "notes": row[6] if len(row) > 6 else ""
         }
     return None
