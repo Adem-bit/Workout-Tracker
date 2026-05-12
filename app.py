@@ -150,12 +150,12 @@ def export_csv():
     csv_data = "Date,Exercise,Sets,Reps,Weight,Notes\n"
 
     for w in workouts:
-        csv_data += f"{w['date']},{w['exercise']},{w['sets']},{w['reps']},{w['weight']},{w['notes']}\n"
+        csv_data += f'"{w['date']}","{w['exercise']}",{w['sets']},"{w['reps']}","{w['weight']}","{w['notes']}"\n'
 
     return Response(
         csv_data,
         mimetype="text/csv",
-        header={"Content-Disposition": "attachment;filename=workouts.csv"}
+        headers={"Content-Disposition": "attachment;filename=workouts.csv"}
     )
 
 
