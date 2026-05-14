@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, Response
-from workout import add_workout, get_all_workouts, delete_workout, get_personal_records, get_workout, update_workout
+from flask import Flask, render_template, request, redirect, Response, jsonify
+from workout import add_workout, get_all_workouts, delete_workout, get_personal_records, get_workout, update_workout, get_pr_history
 from db import init_db
 from datetime import datetime
 
@@ -157,6 +157,11 @@ def export_csv():
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment;filename=workouts.csv"}
     )
+
+
+@app.route("/api/pr-history/<exercise>")
+def pr_history(exercise):
+    return jsonify(get_pr_history(exercise))
 
 
 if __name__ == "__main__":

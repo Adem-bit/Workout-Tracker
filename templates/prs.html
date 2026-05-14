@@ -12,6 +12,18 @@
         <li><strong>{{ exercise }}</strong>: {{ best_rep }} reps</li>
     {% endfor %}
     </ul>
+    <br>
+    
+    <label for="exercise-select">View Progress:</label>
+    <select id="exercise-select">
+        <option value="">-- Choose Exercise --</option>
+        {% for exercise, best_rep in prs.items() %}
+        <option value="{{ exercise }}">{{ exercise }}</option>
+        {% endfor %}
+    </select>
+    <div style="margin-top: 2rem;">
+        <canvas id="progressChart"></canvas>
+    </div>
 {% else %}
     <div class="empty-state">
         <div class="empty-state-icon">🏋️‍♂️</div>
@@ -23,7 +35,63 @@
     </div>
 {% endif %}
 
+<a href="/export-prs">
+    <button type="button" class="export-btn" style="margin-left: 10px;">📥 Export PRs</button>
+</a>
+
 <br>
 <a href="/"><- Back to Workouts</a>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const select = document.getElementById('exercise-select');
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    let chart = null;
+
+    select.addEventListener('change', function() {
+        const exercise = this.value;
+        if (!exercise) return;
+
+        fetch('/api/pr-history/' + exercise)
+        .then(response => response.json())
+        .then(result => {
+            if (chart) {
+                chart.destroy();
+            }
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: result.labels,
+                    datasets: [{
+                        label: exercise + ' - Best Reps',
+                        data: result.data,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#4CAF50'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Reps'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>
 
 {% endblock %}

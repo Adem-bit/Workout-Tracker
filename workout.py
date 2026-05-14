@@ -110,3 +110,27 @@ def get_workout(workout_id):
             "notes": row[6] if len(row) > 6 else ""
         }
     return None
+
+
+def get_pr_history(exercise_name):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT date, reps FROM workouts WHERE exercise = ? ORDER BY date ASC", (exercise_name,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    labels = []
+    data = []
+
+    for date_str, reps_string in rows:
+        try:
+            nums = list(map(int, reps_string.split(',')))
+            best = max(nums)
+            labels.append(date_str)
+            data.append(best)
+        except (ValueError, TypeError):
+            continue
+
+    return {"labels": labels, "data": data}
