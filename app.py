@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, Response, jsonify
-from workout import add_workout, get_all_workouts, delete_workout, get_personal_records, get_workout, update_workout, get_pr_history
+from workout import add_workout, get_all_workouts, delete_workout, get_personal_records, get_workout, update_workout, get_pr_history, get_workouts_by_exercise, get_distinct_exercises
 from db import init_db
 from datetime import datetime
 
@@ -18,8 +18,16 @@ init_db()
 
 @app.route("/")
 def home():
-    all_workouts = get_all_workouts()
-    return render_template("index.html", workouts=all_workouts)
+    filter_exercise = request.args.get("exercise", "")
+
+    if filter_exercise:
+        all_workouts = get_workouts_by_exercise(filter_exercise)
+    else:
+        all_workouts = get_all_workouts()
+
+    exercises = get_distinct_exercises()
+
+    return render_template("index.html", workouts=all_workouts, exercises=exercises, current_filter=filter_exercise)
 
 
 @app.route("/add", methods=["GET", "POST"])

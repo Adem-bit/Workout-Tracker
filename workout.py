@@ -134,3 +134,44 @@ def get_pr_history(exercise_name):
             continue
 
     return {"labels": labels, "data": data}
+
+
+def get_distinct_exercises():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT DISTINCT exercise FROM workouts ORDER BY exercise ASC")
+    rows = cursor.fetchall()
+    conn.close()
+
+    exercises = []
+    for row in rows:
+        exercises.append(row[0])
+
+    return exercises
+
+
+def get_workouts_by_exercise(exercise_name):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM workouts WHERE exercise = ? ORDER BY date ASC", (exercise_name,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    workouts_list = []
+    for row in rows:
+        workout_dict = {
+            "id": row[0],
+            "date": row[1],
+            "exercise": row[2],
+            "sets": row[3],
+            "reps": row[4],
+            "weight": row[5],
+            "notes": row[6] if len(row) > 6 else ""
+        }
+        workouts_list.append(workout_dict)
+
+    return workouts_list
