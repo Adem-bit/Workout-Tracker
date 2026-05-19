@@ -50,7 +50,7 @@ def delete_workout(workout_id):
     cursor.execute("DELETE FROM workouts WHERE id = ?", (workout_id,))
 
     conn.commit()
-    conn.cursor()
+    conn.close()
 
 
 def get_personal_records():
@@ -155,7 +155,6 @@ def get_distinct_exercises():
 def get_workouts_by_exercise(exercise_name):
     conn = get_connection()
     cursor = conn.cursor()
-
     cursor.execute(
         "SELECT * FROM workouts WHERE exercise = ? ORDER BY date ASC", (exercise_name,))
     rows = cursor.fetchall()
@@ -173,5 +172,4 @@ def get_workouts_by_exercise(exercise_name):
             "notes": row[6] if len(row) > 6 else ""
         }
         workouts_list.append(workout_dict)
-
     return workouts_list

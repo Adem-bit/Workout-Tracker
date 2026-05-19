@@ -1,3 +1,9 @@
+{% extends "navbar.html" %}
+
+{% block title %}Home | Workout Tracker{% endblock %}
+
+{% block content %}
+
 <h1>My Calisthenics Journey</h1>
 
 <a href="/add">➕ Add New Workout</a>
@@ -22,3 +28,41 @@
 </form>
 
 <hr>
+
+<h2>Workout History</h2>
+
+{% if workouts %}
+    {% for workout in workouts %}
+        <div class="workout-card">
+            <strong>{{ workout.date | format_date }}</strong> - 
+            {{ workout.exercise }}: 
+            {{ workout.sets }} sets of 
+            {{ workout.reps }} reps 
+            with {{ workout.weight }}
+
+            {% if workout.notes %}
+                <br><small style="color: #666; font-style: italic;">📝 {{ workout.notes }}</small>
+            {% endif %}
+            
+            <a href="/edit/{{ workout.id }}">
+                <button type="button" class="edit-btn">✏️ Edit</button>
+            </a>
+            
+            <form method="POST" action="/delete/{{ workout.id }}" style="display: inline; margin-left: 5px;" onsubmit="return confirm('Delete this workout?');">
+                <button type="submit" class="delete-btn">🗑️ Delete</button>
+            </form>
+        </div>
+        <br>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">🏋️</div>
+        <h2>Your journey starts here</h2>
+        <p class="empty-state-quote">"The only bad workout is the one that didn't happen."</p>
+        <a href="/add">
+            <button class="empty-state-btn">➕ Log Your First Workout</button>
+        </a>
+    </div>
+{% endif %}
+
+{% endblock %}

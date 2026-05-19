@@ -18,17 +18,14 @@ init_db()
 
 @app.route("/")
 def home():
+    all_workouts = get_all_workouts()
+    exercises = get_distinct_exercises()
     filter_exercise = request.args.get("exercise", "")
 
     if filter_exercise:
         all_workouts = get_workouts_by_exercise(filter_exercise)
-    else:
-        all_workouts = get_all_workouts()
-
-    exercises = get_distinct_exercises()
 
     return render_template("index.html", workouts=all_workouts, exercises=exercises, current_filter=filter_exercise)
-
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
