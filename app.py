@@ -25,7 +25,8 @@ def home():
     if filter_exercise:
         all_workouts = get_workouts_by_exercise(filter_exercise)
 
-    return render_template("index.html", workouts=all_workouts, exercises=exercises, current_filter=filter_exercise)
+    return render_template("index.html", workouts=all_workouts, exercises=exercises, current_filter=filter_exercise, active_page="home")
+
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
@@ -60,7 +61,7 @@ def add():
                     "Reps must be numbers separated by commas (e.g. 10,8,7)")
 
         if errors:
-            return render_template("add.html", errors=errors)
+            return render_template("add.html", errors=errors,)
 
         sets = int(sets_str)
         reps = list(map(int, reps_str.split(",")))
@@ -77,7 +78,7 @@ def add():
 
         return redirect("/")
 
-    return render_template("add.html")
+    return render_template("add.html", active_page='add')
 
 
 @app.route("/delete/<int:id>", methods=["POST"])
@@ -89,7 +90,7 @@ def delete(id):
 @app.route("/prs")
 def personal_records():
     prs = get_personal_records()
-    return render_template("prs.html", prs=prs)
+    return render_template("prs.html", prs=prs, active_page="prs")
 
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
@@ -145,7 +146,7 @@ def edit(id):
         update_workout(id, exercise, sets, reps, weight, notes)
         return redirect("/")
 
-    return render_template("edit.html", workout=workout)
+    return render_template("edit.html", workout=workout, active_page="edit")
 
 
 @app.route("/export")

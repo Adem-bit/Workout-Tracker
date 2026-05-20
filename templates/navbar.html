@@ -8,9 +8,9 @@
         <nav class="navbar">
             <div class="nav-bar">Workout Tracker</div>
             <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/add">Add Workout</a>
-                <a href="/prs">Personal Records</a>
+                <a href="/" class="{% if active_page == 'home' %}active{% endif %}">Home</a>
+                <a href="/add" class="{% if active_page == 'add' %}active{% endif %}">Add Workout</a>
+                <a href="/prs" class="{% if active_page == 'prs' %}active{% endif %}">Personal Records</a>
             </div>
         </nav>
 
