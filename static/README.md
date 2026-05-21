@@ -19,4 +19,7 @@ A minimalist workout journal built with Flask and SQLite. Log exercises, track s
 
 ## Tech Stack
 
-Python, Flask, SQLite, HTML, CSS, Jinja2, Chart.js
+- **Backend:** Python, Flask
+- **Database:** SQLite
+- **Frontend:** HTML, CSS, Jinja2, Chart.js
+- **Version Control:** Git, GitHub
