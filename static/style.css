@@ -20,7 +20,7 @@ body {
 
 .navbar {
     background: #0d1a0d;
-    padding: 1rem 2rem;
+    padding: 1.5rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
