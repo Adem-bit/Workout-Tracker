@@ -107,6 +107,17 @@ button {
     background: #38833C;
 }
 
+.save-btn {
+    background: #4CAF50;
+    color: white;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+}
+
+.save-btn:hover {
+    background: #388E3C;
+}
+
 .delete-btn {
     background: #ff4444;
     color: white;
@@ -116,7 +127,16 @@ button {
     background: #cc0000;
 }
 
+.back-link {
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
 
+.back-link:hover {
+    color: #333;
+    text-decoration: underline;
+}
 
 .empty-state {
     text-align: center;
