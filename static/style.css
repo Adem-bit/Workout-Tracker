@@ -183,6 +183,39 @@ button {
     background: #1976D2;
 }
 
+.stats-dashboard {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    text-align: center;
+    flex: 1;
+    min-width: 120px;
+    border-top: 3px solid #4CAF50;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #0d1a0d;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.3rem;
+}
+
 input, select {
     padding: 0.6rem;
     border: 1px solid #ddd;

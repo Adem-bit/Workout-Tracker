@@ -5,7 +5,30 @@
 {% block content %}
 
 <h1>My Calisthenics Journey</h1>
+{% if stats %}
+<div class="stats-dashboard">
+    <div class="stat-item">
+        <span class="stat-number">{{ stats.total }}</span>
+        <span class="stat-label">Total workouts</span>
+    </div>
 
+    <div class="stat-item">
+        <span class="stat-number">{{ stats.this_week }}</span>
+        <span class="stat-label">This week</span>
+    </div>
+
+    <div class="stat-item">
+        <span class="stat-number">{{ stats.favorite }}</span>
+        <span class="stat-label">Favorite</span>
+    </div>
+
+    <div class="stat-item">
+        <span class="stat-number">{{ stats.streak }}</span>
+        <span class="stat-label">Day Streak</span>
+    </div>
+</div>
+<br>
+{% endif %}
 
 <form method="GET" action="/" style="margin-bottom: 1rem;">
     <label for="filter">Filter by exercise:</label>
