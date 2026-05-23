@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from db import get_connection
 
 
@@ -173,3 +173,55 @@ def get_workouts_by_exercise(exercise_name):
         }
         workouts_list.append(workout_dict)
     return workouts_list
+
+
+def get_stats():
+    workouts = get_all_workouts()
+
+    if not workouts:
+        return None
+
+    total_workouts = len(workouts)
+
+    today = date.today()
+    week_ago = today - timedelta(days=7)
+    this_week = 0
+
+    for w in workouts:
+        workout_date = date.fromisoformat(w['date'])
+        if workout_date >= week_ago:
+            this_week += 1
+
+    exercise_counts = {}
+    for w in workouts:
+        ex = w['exercise']
+        if ex in exercise_counts:
+            exercise_counts[ex] += 1
+        else:
+            exercise_counts[ex] = 1
+
+    favorite = max(exercise_counts, key=exercise_counts.get)
+
+    streak = 0
+    check_date = date.today()
+
+    while True:
+        date_str = check_date.isoformat()
+        found = False
+        for w in workouts:
+            if w['date'] == date_str:
+                found = True
+                break
+
+        if found:
+            streak += 1
+            check_date = check_date - timedelta(days=1)
+        else:
+            break
+
+    return {
+        "total": total_workouts,
+        "this_week": this_week,
+        "favorite": favorite,
+        "streak": streak
+    }
