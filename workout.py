@@ -12,7 +12,7 @@ def add_workout(exercise, sets, reps, weight, notes=""):
     cursor.execute("""
     INSERT INTO workouts (date, exercise, sets, reps, weight, notes)
     VALUES (?, ?, ?, ?, ?, ?)
-    """, (today, exercise, sets, reps_string, str(weight), notes))
+    """, (today, exercise.lower().strip(), sets, reps_string, str(weight), notes))
 
     conn.commit()
     conn.close()
@@ -85,7 +85,7 @@ def update_workout(workout_id, exercise, sets, reps, weight, notes=""):
     UPDATE workouts
     SET date = ?, exercise = ?, sets = ?, reps = ?, weight = ?, notes = ?
     WHERE id = ?
-    """, (today, exercise, sets, reps_string, str(weight), notes, workout_id))
+    """, (today, exercise.lower().strip(), sets, reps_string, str(weight), notes, workout_id))
 
     conn.commit()
     conn.close()
@@ -225,3 +225,19 @@ def get_stats():
         "favorite": favorite,
         "streak": streak
     }
+
+
+def normalize_exercises():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, exercise FROM workouts")
+    rows = cursor.fetchall()
+
+    for workout_id, exercise in rows:
+        normalized = exercise.lower().strip()
+        if exercise != normalized:
+            cursor.execute(
+                "UPDATE workouts SET exercise = ? WHERE id = ?", (normalized, workout_id))
+
+    conn.commit()
+    conn.close()
