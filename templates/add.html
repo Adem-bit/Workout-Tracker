@@ -18,7 +18,13 @@
 {% endif %}
 
 <form method="POST">
-    <input name="exercise" placeholder="Exercise"><br><br>
+    <select name="exercise">
+        <option value="">-- Choose Exercise --</option>
+        {% for ex in exercise_list %}
+            <option value="{{ ex }}">{{ ex.title() }}</option>
+        {% endfor %}
+    </select>    
+    <br><br>
     <input name="sets" type="number" placeholder="Sets"><br><br>
     <input name="reps" placeholder="Reps (e.g. 10,8,6)"><br><br>
     <input name="weight" placeholder="Weight or 'bw'"><br><br>

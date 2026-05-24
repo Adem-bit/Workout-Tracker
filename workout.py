@@ -1,6 +1,39 @@
 from datetime import date, timedelta
 from db import get_connection
 
+EXERCISE_LIST = [
+    "pull ups",
+    "chin ups",
+    "dips",
+    "push ups",
+    "decline push ups",
+    "diamond push ups",
+    "wide push ups",
+    "pike push ups",
+    "handstand push ups",
+    "australian pull ups",
+    "muscle ups",
+    "squats",
+    "lunges",
+    "pistol squats",
+    "calf raises",
+    "plank",
+    "hanging leg raises",
+    "l-sit",
+    "hollow body hold",
+    "arch body hold",
+    "burpees",
+    "mountain climbers",
+    "bench press",
+    "deadlift",
+    "overhead press",
+    "bicep curls",
+    "tricep extensions",
+    "lateral raises",
+    "rows",
+    "lat pulldowns",
+]
+
 
 def add_workout(exercise, sets, reps, weight, notes=""):
     today = date.today().isoformat()

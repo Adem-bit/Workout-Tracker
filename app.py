@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, Response, jsonify
-from workout import add_workout, get_all_workouts, delete_workout, get_personal_records, get_workout, update_workout, get_pr_history, get_workouts_by_exercise, get_distinct_exercises, get_stats
+from workout import add_workout, get_all_workouts, delete_workout, get_personal_records, get_workout, update_workout, get_pr_history, get_workouts_by_exercise, get_distinct_exercises, get_stats, EXERCISE_LIST
 from db import init_db
 from datetime import datetime
 
@@ -64,7 +64,7 @@ def add():
                     "Reps must be numbers separated by commas (e.g. 10,8,7)")
 
         if errors:
-            return render_template("add.html", errors=errors,)
+            return render_template("add.html", errors=errors, active_page="add", exercise_list=EXERCISE_LIST)
 
         sets = int(sets_str)
         reps = list(map(int, reps_str.split(",")))
@@ -81,7 +81,7 @@ def add():
 
         return redirect("/")
 
-    return render_template("add.html", active_page='add')
+    return render_template("add.html", active_page='add', exercise_list=EXERCISE_LIST)
 
 
 @app.route("/delete/<int:id>", methods=["POST"])
@@ -133,7 +133,7 @@ def edit(id):
                     "Reps must be numbers separated by commas (e.g. 10,8,6)")
 
         if errors:
-            return render_template("edit.html", workout=workout, errors=errors)
+            return render_template("edit.html", workout=workout, errors=errors, active_page="edit", exercise_list=EXERCISE_LIST)
 
         sets = int(sets_str)
         reps = list(map(int, reps_str.split(",")))
@@ -149,7 +149,7 @@ def edit(id):
         update_workout(id, exercise, sets, reps, weight, notes)
         return redirect("/")
 
-    return render_template("edit.html", workout=workout, active_page="edit")
+    return render_template("edit.html", workout=workout, active_page="edit", exercise_list=EXERCISE_LIST)
 
 
 @app.route("/export")
