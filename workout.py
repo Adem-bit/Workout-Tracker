@@ -35,6 +35,56 @@ EXERCISE_LIST = [
 ]
 
 
+def validate_workout_form(form):
+    exercise = form.get("exercise", "").strip()
+    sets_str = form.get("sets", "").strip()
+    reps_str = form.get("reps", "").strip()
+    weight_str = form.get("weight", "").strip()
+    notes = form.get("notes", "").strip()
+
+    errors = []
+    if not exercise:
+        errors.append("Exercise name is required")
+    if not sets_str:
+        errors.append("Number of Sets is required")
+    if not reps_str:
+        errors.append("Number of Reps is required")
+    if not weight_str:
+        errors.append("Weight is required")
+
+    if sets_str:
+        try:
+            sets = int(sets_str)
+        except ValueError:
+            errors.append("Sets must be a number")
+
+    if reps_str and not errors:
+        try:
+            reps = list(map(int, reps_str.split(",")))
+        except ValueError:
+            errors.append(
+                "Reps must be numbers separated by commas (e.g. 10,8,6)")
+
+    if weight_str.lower() == "bw":
+        weight = "bodyweight"
+    else:
+        try:
+            weight = float(weight_str)
+        except ValueError:
+            weight = weight_str
+
+    if errors:
+        return None, errors
+
+    return {
+        "exercise": exercise,
+        "sets": sets,
+        "reps": reps,
+        "weight": weight,
+        "notes": notes
+    }, None
+
+
 def add_workout(exercise, sets, reps, weight, notes=""):
     today = date.today().isoformat()
     reps_string = ",".join(map(str, reps))
