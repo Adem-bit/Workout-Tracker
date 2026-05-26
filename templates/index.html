@@ -35,7 +35,7 @@
     <select name="exercise" id="filter" onchange="this.form.submit()">
         <option value="">-- Show All --</option>
         {% for ex in exercises %}
-            <option value="{{ ex }}" {% if ex == current_filter %}selected{% endif %}>{{ ex }}</option>
+            <option value="{{ ex }}" {% if ex == current_filter %}selected{% endif %}>{{ ex.title() }}</option>
         {% endfor %}
     </select>
     {% if current_filter %}
