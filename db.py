@@ -8,7 +8,6 @@ def get_connection():
 
 
 def init_db():
-    print("INIT DB RUNNING")
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -18,12 +17,20 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         date TEXT,
         exercise TEXT,
-        sets INTEGER,
-        reps TEXT,
         weight TEXT,
         notes TEXT
     )
     """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS sets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        workout_id INTEGER,
+        set_number INTEGER,
+        reps INTEGER,
+        FOREIGN KEY (workout_id) REFERENCES workouts (id) ON DELETE CASCADE
+    )  
+""")
 
     conn.commit()
     conn.close()

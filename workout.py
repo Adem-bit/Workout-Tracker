@@ -93,9 +93,17 @@ def add_workout(exercise, sets, reps, weight, notes=""):
     cursor = conn.cursor()
 
     cursor.execute("""
-    INSERT INTO workouts (date, exercise, sets, reps, weight, notes)
-    VALUES (?, ?, ?, ?, ?, ?)
-    """, (today, exercise.lower().strip(), sets, reps_string, str(weight), notes))
+    INSERT INTO workouts (date, exercise, weight, notes)
+    VALUES (?, ?, ?, ?)
+""", (today, exercise, str(weight), notes))
+
+    workout_id = cursor.lastrowid
+
+    for i, rep in enumerate(reps, start=1):
+        cursor.execute("""
+    INSERT INTO sets (workout_id, set_number, reps)
+    VALUES (?, ?, ?)
+""", (workout_id, i, rep))
 
     conn.commit()
     conn.close()
@@ -106,23 +114,30 @@ def get_all_workouts():
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM workouts ORDER BY date ASC")
-
-    rows = cursor.fetchall()
-    conn.close()
+    workout_rows = cursor.fetchall()
 
     workouts_list = []
-    for row in rows:
+    for row in workout_rows:
+        workout_id = row[0]
+        cursor.execute(
+            "SELECT set_number, reps FROM sets WHERE workout_id = ? ORDER BY set_number ASC", (workout_id,))
+        sets_rows = cursor.fetchall()
+
+        reps_list = [str(s[1]) for s in sets_rows]
+        total_sets = len(sets_rows)
+
         workout_dict = {
             "id": row[0],
             "date": row[1],
             "exercise": row[2],
-            "sets": row[3],
-            "reps": row[4],
-            "weight": row[5],
-            "notes": row[6] if len(row) > 6 else ""
+            "sets": total_sets,
+            "reps": ",".join(reps_list),
+            "weight": row[3],
+            "notes": row[4] if len(row) > 4 else ""
         }
         workouts_list.append(workout_dict)
 
+    conn.close()
     return workouts_list
 
 
@@ -139,36 +154,43 @@ def delete_workout(workout_id):
 def get_personal_records():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT exercise, reps FROM workouts")
+
+    cursor.execute("""
+    SELECT w.exercise, s.reps
+    FROM workouts w
+    JOIN sets s ON w.id = s.workout_id
+""")
+
     rows = cursor.fetchall()
     conn.close()
 
     prs = {}
-    for exercise, reps_string in rows:
-        try:
-            nums = list(map(int, reps_string.split(",")))
-            best = max(nums)
-        except (ValueError, TypeError):
-            continue
-
-        if best > prs.get(exercise, 0):
-            prs[exercise] = best
+    for exercise, rep in rows:
+        if rep > prs.get(exercise, 0):
+            prs[exercise] = rep
 
     return prs
 
 
 def update_workout(workout_id, exercise, sets, reps, weight, notes=""):
     today = date.today().isoformat()
-    reps_string = ",".join(map(str, reps))
 
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
     UPDATE workouts
-    SET date = ?, exercise = ?, sets = ?, reps = ?, weight = ?, notes = ?
+    SET date = ?, exercise = ?, weight = ?, notes = ?
     WHERE id = ?
-    """, (today, exercise.lower().strip(), sets, reps_string, str(weight), notes, workout_id))
+    """, (today, exercise.lower().strip(), str(weight), notes, workout_id))
+
+    cursor.execute("DELETE FROM sets WHERE workout_id = ?", (workout_id))
+
+    for i, rep in enumerate(reps, start=1):
+        cursor.execute("""
+            INSERT INTO sets (workout_id, set_number, reps)
+            VALUES (?, ?, ?)
+""", (workout_id, i, rep))
 
     conn.commit()
     conn.close()
@@ -180,17 +202,28 @@ def get_workout(workout_id):
 
     cursor.execute("SELECT * FROM workouts WHERE id = ?", (workout_id,))
     row = cursor.fetchone()
+
+    if not row:
+        conn.close()
+        return None
+
+    cursor.execute(
+        "SELECT set_number, reps FROM sets WHERE workout_id = ? ORDER BY set_number ASC," (workout_id,))
+    sets_rows = cursor.fetchall()
     conn.close()
+
+    reps_list = [str(s[1]) for s in sets_rows]
+    total_sets = len(sets_rows)
 
     if row:
         return {
             "id": row[0],
             "date": row[1],
             "exercise": row[2],
-            "sets": row[3],
-            "reps": row[4],
-            "weight": row[5],
-            "notes": row[6] if len(row) > 6 else ""
+            "sets": total_sets,
+            "reps": ",".join(reps_list),
+            "weight": row[3],
+            "notes": row[4] if len(row) > 4 else ""
         }
     return None
 
@@ -199,22 +232,22 @@ def get_pr_history(exercise_name):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT date, reps FROM workouts WHERE exercise = ? ORDER BY date ASC", (exercise_name,))
+    cursor.execute("""
+        SELECT w.date, s.reps
+        FROM workouts w
+        JOIN sets s ON w.id = s.workout_id
+        WHERE w.exercise = ?
+        ORDER by w.date ASC
+""", (exercise_name,))
     rows = cursor.fetchall()
     conn.close()
 
     labels = []
     data = []
 
-    for date_str, reps_string in rows:
-        try:
-            nums = list(map(int, reps_string.split(',')))
-            best = max(nums)
-            labels.append(date_str)
-            data.append(best)
-        except (ValueError, TypeError):
-            continue
+    for date_str, rep in rows:
+        labels.append(date_str)
+        data.append(rep)
 
     return {"labels": labels, "data": data}
 
@@ -240,21 +273,29 @@ def get_workouts_by_exercise(exercise_name):
     cursor = conn.cursor()
     cursor.execute(
         "SELECT * FROM workouts WHERE exercise = ? ORDER BY date ASC", (exercise_name,))
-    rows = cursor.fetchall()
-    conn.close()
+    workout_rows = cursor.fetchall()
 
     workouts_list = []
-    for row in rows:
+    for row in workout_rows:
+        workout_id = row[0]
+        cursor.execute(
+            "SELECT set_number, reps FROM sets WHERE workout_id = ? ORDER BY set_number ASC", (workout_id,))
+        sets_rows = cursor.fetchall()
+
+        reps_list = [str(s[1]) for s in sets_rows]
+        total_sets = len(sets_rows)
         workout_dict = {
             "id": row[0],
             "date": row[1],
             "exercise": row[2],
-            "sets": row[3],
-            "reps": row[4],
-            "weight": row[5],
-            "notes": row[6] if len(row) > 6 else ""
+            "sets": total_sets,
+            "reps": ",".join(reps_list),
+            "weight": row[3],
+            "notes": row[4] if len(row) > 4 else ""
         }
         workouts_list.append(workout_dict)
+
+    conn.close()
     return workouts_list
 
 
@@ -324,3 +365,26 @@ def normalize_exercises():
 
     conn.commit()
     conn.close()
+
+
+def migrate_to_sets_table():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, reps FROM workouts")
+    old_workouts = cursor.fetchall()
+
+    for workout_id, reps_string in old_workouts:
+        try:
+            reps_list = reps_string.split(',')
+            for i, rep in enumerate(reps_list, start=1):
+                cursor.execute(
+                    "INSERT INTO sets (workout_id, set_number, reps) VALUES (?, ?, ?)",
+                    (workout_id, i, int(rep.strip()))
+                )
+        except:
+            continue
+
+        conn.commit()
+        conn.close()
+        print("Migration complete.")
