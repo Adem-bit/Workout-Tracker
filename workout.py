@@ -35,12 +35,61 @@ EXERCISE_LIST = [
 ]
 
 
+def validate_api_workout(data):
+    errors = []
+
+    exercise = data.get("exercise", "").strip().lower()
+    sets = data.get("sets", 0)
+    reps = data.get("reps", [])
+    weight = data.get("weight", "")
+    notes = data.get("notes" "")
+
+    if not exercise:
+        errors.append("Exercise name is required")
+    if not isinstance(sets, int) or sets <= 0:
+        errors.append("Sets must be a positive number")
+    if not isinstance(reps, list) or len(reps) == 0:
+        errors.append("Reps must be a list of numbers")
+    if not weight:
+        errors.append("Weight is required")
+
+    if errors:
+        return None, errors
+
+    if str(weight).lower() == 'bw':
+        weight = "bodyweight"
+    else:
+        try:
+            weight = float(weight)
+        except ValueError:
+            weight = str(weight)
+
+        return {
+            "exercise": exercise,
+            "sets": sets,
+            "reps": reps,
+            "weight": weight,
+            "notes": notes
+        }, None
+
+
 def validate_workout_form(form):
-    exercise = form.get("exercise", "").strip()
-    sets_str = form.get("sets", "").strip()
-    reps_str = form.get("reps", "").strip()
-    weight_str = form.get("weight", "").strip()
-    notes = form.get("notes", "").strip()
+    exercise = form.get("exercise", "") if hasattr(form, 'get') else form.get(
+        "exercise", "").strip() if isinstance(form.get("exercise", ""), str) else ""
+
+    if isinstance(form, dict) and not hasattr(form, 'get'):
+        exercise = form.get("exercise", "").strip() if isinstance(
+            form.get("exercise"), str) else ""
+        sets_str = str(form.get("sets", ""))
+        reps_str = str(form.get("reps", ""))
+        weight_str = str(form.get("weight", ""))
+        notes = str(form.get("notes", ""))
+    else:
+        exercise = form.get("exercise", "").strip()
+        sets_str = form.get("sets", "").strip()
+        reps_str = form.get("reps", "").strip()
+        weight_str = form.get("weight", "").strip()
+        notes = form.get("notes", "").strip()
 
     errors = []
     if not exercise:
@@ -60,12 +109,12 @@ def validate_workout_form(form):
 
     if reps_str and not errors:
         try:
-            reps = list(map(int, reps_str.split(",")))
+            reps = list(map(int, reps_str.split(',')))
         except ValueError:
             errors.append(
-                "Reps must be numbers separated by commas (e.g. 10,8,6)")
+                "Reps must be numbers seperated by commas (e.g. 10,8,6)")
 
-    if weight_str.lower() == "bw":
+    if weight_str.lower() == 'bw':
         weight = "bodyweight"
     else:
         try:
