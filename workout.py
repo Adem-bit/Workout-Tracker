@@ -2,8 +2,18 @@ from datetime import date, timedelta
 from db import get_connection
 
 EXERCISE_LIST = [
+    # Pull
     "pull ups",
     "chin ups",
+    "australian pull ups",
+    "muscle ups",
+    "face pulls",
+    "rows",
+    "lat pulldowns",
+    "bicep curls",
+    "deadlift",
+
+    # Push
     "dips",
     "push ups",
     "decline push ups",
@@ -11,27 +21,37 @@ EXERCISE_LIST = [
     "wide push ups",
     "pike push ups",
     "handstand push ups",
-    "australian pull ups",
-    "muscle ups",
+    "bench press",
+    "overhead press",
+    "tricep extensions",
+    "skull crushers",
+    "lateral raises",
+
+    # Legs
     "squats",
+    "bulgarian split squats",
+    "sissy squats",
     "lunges",
     "pistol squats",
     "calf raises",
+
+    # Core
     "plank",
     "hanging leg raises",
     "l-sit",
     "hollow body hold",
     "arch body hold",
+    "russian twists",
+    "dead bug",
+    "flutter kicks",
+
+    # Skills / Static Holds
+    "front lever",
+    "planche",
+
+    # Full Body / Conditioning
     "burpees",
     "mountain climbers",
-    "bench press",
-    "deadlift",
-    "overhead press",
-    "bicep curls",
-    "tricep extensions",
-    "lateral raises",
-    "rows",
-    "lat pulldowns",
 ]
 
 
