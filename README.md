@@ -1,5 +1,9 @@
 # Workout Tracker
 
+![Python](https://img.shields.io/badge/Python-3.x-green)
+![Flask](https://img.shields.io/badge/Flask-2.x-black)
+![SQLite](https://img.shields.io/badge/SQLite-3-blue)
+
 A minimalist workout journal built with Flask and SQLite. Log exercises, track sets and reps, and monitor progress over time with interactive charts.
 
 ## Features
