@@ -23,3 +23,7 @@ A minimalist workout journal built with Flask and SQLite. Log exercises, track s
 - **Database:** SQLite
 - **Frontend:** HTML, CSS, Jinja2, Chart.js
 - **Version Control:** Git, GitHub
+
+## Full Feature List
+
+See [FEATURES.md](FEATURES.md) for a complete list of features.

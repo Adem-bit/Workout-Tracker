@@ -22,6 +22,5 @@
 ## UI
 
 - Dark green navbar with active highlighting
-- Responsive desing
+- Responsive design
 - Empty states with motivational quotes
-s
