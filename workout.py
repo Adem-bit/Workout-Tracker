@@ -56,13 +56,14 @@ EXERCISE_LIST = [
 
 
 def validate_api_workout(data):
+    """Validates workout data from API JSON requests. Returns (data_dict, None) on success or (None, errors_list) on failure."""
     errors = []
 
     exercise = data.get("exercise", "").strip().lower()
     sets = data.get("sets", 0)
     reps = data.get("reps", [])
     weight = data.get("weight", "")
-    notes = data.get("notes" "")
+    notes = data.get("notes", "")
 
     if not exercise:
         errors.append("Exercise name is required")
@@ -84,22 +85,19 @@ def validate_api_workout(data):
         except ValueError:
             weight = str(weight)
 
-        return {
-            "exercise": exercise,
-            "sets": sets,
-            "reps": reps,
-            "weight": weight,
-            "notes": notes
-        }, None
+    return {
+        "exercise": exercise,
+        "sets": sets,
+        "reps": reps,
+        "weight": weight,
+        "notes": notes
+    }, None
 
 
 def validate_workout_form(form):
-    exercise = form.get("exercise", "") if hasattr(form, 'get') else form.get(
-        "exercise", "").strip() if isinstance(form.get("exercise", ""), str) else ""
-
+    """Validates workout data from HTML form submissions. Returns (data_dict, None) on success or (None, errors_list) on failure."""
     if isinstance(form, dict) and not hasattr(form, 'get'):
-        exercise = form.get("exercise", "").strip() if isinstance(
-            form.get("exercise"), str) else ""
+        exercise = form.get("exercise", "").strip() if isinstance(form.get("exercise"), str) else ""
         sets_str = str(form.get("sets", ""))
         reps_str = str(form.get("reps", ""))
         weight_str = str(form.get("weight", ""))
@@ -131,8 +129,7 @@ def validate_workout_form(form):
         try:
             reps = list(map(int, reps_str.split(',')))
         except ValueError:
-            errors.append(
-                "Reps must be numbers seperated by commas (e.g. 10,8,6)")
+            errors.append("Reps must be numbers separated by commas (e.g. 10,8,6)")
 
     if weight_str.lower() == 'bw':
         weight = "bodyweight"
@@ -155,8 +152,8 @@ def validate_workout_form(form):
 
 
 def add_workout(exercise, sets, reps, weight, notes=""):
+    """Adds a new workout with its sets to the database."""
     today = date.today().isoformat()
-    reps_string = ",".join(map(str, reps))
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -179,6 +176,7 @@ def add_workout(exercise, sets, reps, weight, notes=""):
 
 
 def get_all_workouts():
+    """Returns all workouts as a list of dictionaries, each with their sets joined."""
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -211,6 +209,7 @@ def get_all_workouts():
 
 
 def delete_workout(workout_id):
+    """Deletes a workout and its associated sets (CASCADE)."""
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -221,6 +220,7 @@ def delete_workout(workout_id):
 
 
 def get_personal_records():
+    """Returns a dictionary with the best reps for each exercise."""
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -242,6 +242,7 @@ def get_personal_records():
 
 
 def update_workout(workout_id, exercise, sets, reps, weight, notes=""):
+    """Updates an existing workout: modifies the workout row and replaces its sets."""
     today = date.today().isoformat()
 
     conn = get_connection()
@@ -266,6 +267,7 @@ def update_workout(workout_id, exercise, sets, reps, weight, notes=""):
 
 
 def get_workout(workout_id):
+    """Returns a single workout as a dictionary, or None if not found."""
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -277,27 +279,26 @@ def get_workout(workout_id):
         return None
 
     cursor.execute(
-        "SELECT set_number, reps FROM sets WHERE workout_id = ? ORDER BY set_number ASC," (workout_id,))
+        "SELECT set_number, reps FROM sets WHERE workout_id = ? ORDER BY set_number ASC", (workout_id,))
     sets_rows = cursor.fetchall()
     conn.close()
 
     reps_list = [str(s[1]) for s in sets_rows]
     total_sets = len(sets_rows)
 
-    if row:
-        return {
-            "id": row[0],
-            "date": row[1],
-            "exercise": row[2],
-            "sets": total_sets,
-            "reps": ",".join(reps_list),
-            "weight": row[3],
-            "notes": row[4] if len(row) > 4 else ""
-        }
-    return None
+    return {
+        "id": row[0],
+        "date": row[1],
+        "exercise": row[2],
+        "sets": total_sets,
+        "reps": ",".join(reps_list),
+        "weight": row[3],
+        "notes": row[4] if len(row) > 4 else ""
+    }
 
 
 def get_pr_history(exercise_name):
+    """Returns labels and data arrays for Chart.js progress chart."""
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -322,6 +323,7 @@ def get_pr_history(exercise_name):
 
 
 def get_distinct_exercises():
+    """Returns a list of all unique exercise names in the database."""
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -338,6 +340,7 @@ def get_distinct_exercises():
 
 
 def get_workouts_by_exercise(exercise_name):
+    """Returns all workouts of a specific exercise as a list of dictionaries."""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
@@ -369,6 +372,7 @@ def get_workouts_by_exercise(exercise_name):
 
 
 def get_stats():
+    """Returns total workouts, this week's count, favorite exercise, and current streak."""
     workouts = get_all_workouts()
 
     if not workouts:
@@ -418,42 +422,3 @@ def get_stats():
         "favorite": favorite,
         "streak": streak
     }
-
-
-def normalize_exercises():
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT id, exercise FROM workouts")
-    rows = cursor.fetchall()
-
-    for workout_id, exercise in rows:
-        normalized = exercise.lower().strip()
-        if exercise != normalized:
-            cursor.execute(
-                "UPDATE workouts SET exercise = ? WHERE id = ?", (normalized, workout_id))
-
-    conn.commit()
-    conn.close()
-
-
-def migrate_to_sets_table():
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT id, reps FROM workouts")
-    old_workouts = cursor.fetchall()
-
-    for workout_id, reps_string in old_workouts:
-        try:
-            reps_list = reps_string.split(',')
-            for i, rep in enumerate(reps_list, start=1):
-                cursor.execute(
-                    "INSERT INTO sets (workout_id, set_number, reps) VALUES (?, ?, ?)",
-                    (workout_id, i, int(rep.strip()))
-                )
-        except:
-            continue
-
-        conn.commit()
-        conn.close()
-        print("Migration complete.")
