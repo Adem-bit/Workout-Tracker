@@ -9,9 +9,15 @@ EXERCISE_LIST = [
     "muscle ups",
     "face pulls",
     "rows",
+    "t-bar rows",
     "lat pulldowns",
     "bicep curls",
+    "incline dumbbell curls",
+    "spider curls",
+    "shrugs",
     "deadlift",
+    "Overhead cable tricep extensions",
+    "Cable lateral raises",
 
     # Push
     "dips",
@@ -23,6 +29,7 @@ EXERCISE_LIST = [
     "handstand push ups",
     "bench press",
     "overhead press",
+    "incline dumbbell press",
     "tricep extensions",
     "skull crushers",
     "lateral raises",
@@ -34,6 +41,9 @@ EXERCISE_LIST = [
     "lunges",
     "pistol squats",
     "calf raises",
+    "hamstring curls",
+    "leg press",
+    "leg extensions",
 
     # Core
     "plank",
@@ -97,7 +107,8 @@ def validate_api_workout(data):
 def validate_workout_form(form):
     """Validates workout data from HTML form submissions. Returns (data_dict, None) on success or (None, errors_list) on failure."""
     if isinstance(form, dict) and not hasattr(form, 'get'):
-        exercise = form.get("exercise", "").strip() if isinstance(form.get("exercise"), str) else ""
+        exercise = form.get("exercise", "").strip() if isinstance(
+            form.get("exercise"), str) else ""
         sets_str = str(form.get("sets", ""))
         reps_str = str(form.get("reps", ""))
         weight_str = str(form.get("weight", ""))
@@ -129,7 +140,8 @@ def validate_workout_form(form):
         try:
             reps = list(map(int, reps_str.split(',')))
         except ValueError:
-            errors.append("Reps must be numbers separated by commas (e.g. 10,8,6)")
+            errors.append(
+                "Reps must be numbers separated by commas (e.g. 10,8,6)")
 
     if weight_str.lower() == 'bw':
         weight = "bodyweight"
@@ -254,13 +266,14 @@ def update_workout(workout_id, exercise, sets, reps, weight, notes=""):
     WHERE id = ?
     """, (today, exercise.lower().strip(), str(weight), notes, workout_id))
 
-    cursor.execute("DELETE FROM sets WHERE workout_id = ?", (workout_id))
+    print("DEBUG workout_id:", repr(workout_id))
+    cursor.execute("DELETE FROM sets WHERE workout_id = ?", (int(workout_id),))
 
     for i, rep in enumerate(reps, start=1):
         cursor.execute("""
             INSERT INTO sets (workout_id, set_number, reps)
             VALUES (?, ?, ?)
-""", (workout_id, i, rep))
+""", (int(workout_id), i, rep))
 
     conn.commit()
     conn.close()
